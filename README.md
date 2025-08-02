@@ -69,7 +69,7 @@ Further extensions (like advanced batching, plugin systems, or custom spec types
 
 ## 📜 License
 
-See [`docs/LICENSE.md`](docs/LICENSE.md) for terms.  
+See [`LICENSE.md`](LICENSE.md) for terms.  
 Free for personal, non-commercial use.  
 Commercial licensing available under M7 Moderate Team License (MTL-10).
 
