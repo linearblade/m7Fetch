@@ -1,4 +1,4 @@
-# m7Fetch
+# m7Fetch 
 
 **m7Fetch** is a dynamic, modular network toolkit for modern JavaScript environments.  
 It provides a clean, extensible interface for loading specs, APIs, and dynamic modules at runtime — all wrapped in a developer-friendly architecture that minimizes boilerplate and promotes flexible usage.
