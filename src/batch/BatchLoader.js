@@ -149,11 +149,11 @@ export class BatchLoader {
 	    const {method='get', id, url, handler,opts={},data: postData = null } = item;
 	    const  mOpts = {...{format:'full'}, ...this.fetchOpts, ...opts} ;
 	    if (method =='post'){
-		net.http.post(url,postData,mOpts).then(
+		this.net.http.post(url,postData,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }else{
-		net.http.get(url,mOpts).then(
+		this.net.http.get(url,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }
