@@ -158,6 +158,7 @@ export class BatchLoader {
 		);
 	    }
 	}
+	return sync;
     }
 
     /**
