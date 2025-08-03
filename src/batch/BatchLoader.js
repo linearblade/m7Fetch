@@ -144,20 +144,38 @@ export class BatchLoader {
 	});
 	
 	const validatedList = this._preflightCheck(loadList);
+	const all = [];
+	for (const item of validatedList) {
+	    const { method = 'get', id, url, handler, opts = {}, data: postData = null } = item;
+	    const mOpts = { ...{ format: 'full' }, ...this.fetchOpts, ...opts };
 
+	    const request = method === 'post'
+		  ? this.net.http.post(url, postData, mOpts)
+		  : this.net.http.get(url, mOpts);
+
+	    all.push(
+		request.then(sync.wrapper(id, batchWrapper(this, id, handler, item, mOpts)))
+	    );
+	}
+	/*
 	for (const item of validatedList) {
 	    const {method='get', id, url, handler,opts={},data: postData = null } = item;
 	    const  mOpts = {...{format:'full'}, ...this.fetchOpts, ...opts} ;
+	    let resp = null;
 	    if (method =='post'){
-		this.net.http.post(url,postData,mOpts).then(
+		 this.net.http.post(url,postData,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }else{
-		this.net.http.get(url,mOpts).then(
+		 this.net.http.get(url,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }
-	}
+	    
+	    }
+	*/
+
+	await Promise.all(all); 
 	return sync;
     }
 
