@@ -106,8 +106,18 @@ export class BatchLoader {
      *     ...
      *   ]
      *
-     * @param {Function|null} load - Callback fired when all items have successfully loaded
-     * @param {Function|null} fail - Callback fired if any item fails
+     * @param {Function|null} load - Callback fired when all items have successfully loaded.
+     * @param {Function|null} fail - Callback fired if any item fails.
+     * @param {Object} [options={}] - Optional control flags.
+     * @param {boolean} [options.awaitAll=true] - If true, waits for all responses to complete before returning.
+     *                                            If false, returns immediately with unresolved promises.
+     *
+     * @returns {Promise<{sync: SyncLoader, results: Object<string, any>|Promise<any>[]}>>}
+     * Resolves to an object containing:
+     * - `sync`: The SyncLoader controller tracking completion and failure states.
+     * - `results`: 
+     *     - If `awaitAll` is `true`: a map of `{ id → handler result }` after all requests resolve.
+     *     - If `awaitAll` is `false`: an array of unresolved Promises in submission order.
      *
      * The load/fail callbacks are invoked as:
      *   (prepend, data)
@@ -126,6 +136,11 @@ export class BatchLoader {
      *   to trigger the fail path — manual `sync.set()` or `sync.fail()` is not required.
      * - All successful responses or transformed values are stored in `.context` by default
      *   unless suppressed by the batch handler.
+     * - If using awaitAll = false, handlers will fire as they receive data. afterwards, the user can poll
+     *   the SyncLoader object. sync.loaded() == if finished, sync.failed() == failed. sync.success() == convenience function (!sync.failed())
+     *   failed will only function if returning false (included with built in functions, required if using a custom batch handler)
+     *   Requires external tooling (ie, perhaps an interval handler) to poll sync object for completion
+     
      */
 
     async run(loadList = [], load = null, fail = null,{ awaitAll = true } = {}) {

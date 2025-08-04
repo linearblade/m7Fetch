@@ -199,7 +199,15 @@ export class SyncLoader {
 	return rv;
     }
 
-
+    /**
+     * Indicates whether all tracked requests completed successfully.
+     * Equivalent to `!this.failed()`.
+     * does not accept arguments , although fail does. used for polling unresolved jobs.
+     * @returns {boolean}
+     */
+    success() {
+	return !this.failed();
+    }
     /**
      * Mark a task as completed with failure.
      *
