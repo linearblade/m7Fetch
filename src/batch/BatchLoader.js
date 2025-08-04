@@ -155,8 +155,19 @@ export class BatchLoader {
 
 	    all.push(
 		request.then(sync.wrapper(id, batchWrapper(this, id, handler, item, mOpts)))
+		.then(result => ({ id, result }))
 	    );
 	}
+
+	const flatResults = await Promise.all(all);
+
+	const results = {};
+	for (const { id, result } of flatResults) {
+	    results[id] = result;
+	}
+
+	return { sync, results };
+	
 	/*
 	for (const item of validatedList) {
 	    const {method='get', id, url, handler,opts={},data: postData = null } = item;
@@ -175,8 +186,8 @@ export class BatchLoader {
 	    }
 	*/
 
-	const results = await Promise.all(all); 
-	return {sync,results};
+	//const results = await Promise.all(all); 
+	//return {sync,results};
     }
 
     /**
