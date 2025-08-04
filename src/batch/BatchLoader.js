@@ -81,12 +81,12 @@ export class BatchLoader {
 	    }
 	    if(handler)
 		return handler(res);
-	    return;
+	    return res;
 	}
     }
     //does nothing with your results. up to you.
     batchNone(obj,id,handler){
-	return handler;
+	return handler?handler(res):res;;
     }
     //end fake statics
 
@@ -163,20 +163,20 @@ export class BatchLoader {
 	    const  mOpts = {...{format:'full'}, ...this.fetchOpts, ...opts} ;
 	    let resp = null;
 	    if (method =='post'){
-		 this.net.http.post(url,postData,mOpts).then(
+		 resp = this.net.http.post(url,postData,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }else{
-		 this.net.http.get(url,mOpts).then(
+		 resp = this.net.http.get(url,mOpts).then(
 		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
 		);
 	    }
-	    
+	    all.push(resp);
 	    }
 	*/
 
-	await Promise.all(all); 
-	return sync;
+	const results = await Promise.all(all); 
+	return {sync,results};
     }
 
     /**
