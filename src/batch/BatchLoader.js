@@ -128,7 +128,7 @@ export class BatchLoader {
      *   unless suppressed by the batch handler.
      */
 
-    async run(loadList = [], load = null, fail = null) {
+    async run(loadList = [], load = null, fail = null,{ awaitAll = true } = {}) {
 	// Track required IDs from load list
 	let required = loadList.map(({ id }) => id);
 	const batchWrapper = this.batchHandler === false
@@ -159,35 +159,16 @@ export class BatchLoader {
 	    );
 	}
 
-	const flatResults = await Promise.all(all);
 
-	const results = {};
-	for (const { id, result } of flatResults) {
-	    results[id] = result;
+	let results = {};
+	if (awaitAll) {
+            const flatResults = await Promise.all(all);
+            for (const { id, result } of flatResults) results[id] = result;
 	}
 
 	return { sync, results };
 	
-	/*
-	for (const item of validatedList) {
-	    const {method='get', id, url, handler,opts={},data: postData = null } = item;
-	    const  mOpts = {...{format:'full'}, ...this.fetchOpts, ...opts} ;
-	    let resp = null;
-	    if (method =='post'){
-		 resp = this.net.http.post(url,postData,mOpts).then(
-		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
-		);
-	    }else{
-		 resp = this.net.http.get(url,mOpts).then(
-		    sync.wrapper(id,  batchWrapper(this,id,handler,item,mOpts) )
-		);
-	    }
-	    all.push(resp);
-	    }
-	*/
-
-	//const results = await Promise.all(all); 
-	//return {sync,results};
+	
     }
 
     /**
