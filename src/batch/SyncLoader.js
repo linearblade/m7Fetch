@@ -263,7 +263,7 @@ export class SyncLoader {
 		this.fail(id, ...args);
 	    }
 	    this.set(id, ...args);
-	    
+	    return  args.length ? args[0] : result;
 	};
     }
 
