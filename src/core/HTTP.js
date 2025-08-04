@@ -81,7 +81,7 @@ export class HTTP {
     }
 
     async get(path, opts = {}) {
-	return this._noBodyRequest('DELETE', path, opts);
+	return this._noBodyRequest('GET', path, opts);
     }
     async delete(path, opts = {}) {
 	return this._noBodyRequest('DELETE', path, opts);
