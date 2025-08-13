@@ -112,6 +112,8 @@ export class BatchLoader {
      * @param {Object} [options={}] - Optional control flags.
      * @param {boolean} [options.awaitAll=true] - If true, waits for all responses to complete before returning.
      *                                            If false, returns immediately with unresolved promises.
+     * @param {boolean} [options.limit=8] - sets the concurrency limit for fetch requests.
+     *                                      If you wish to disable it (and you probably dont), just set it very high.
      *
      * @returns {Promise<{sync: SyncLoader, results: Object<string, any>|Promise<any>[]}>>}
      * Resolves to an object containing:
