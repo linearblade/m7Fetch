@@ -5,6 +5,7 @@
 // vendor/network/BatchLoader.js
 
 import SyncLoader from './SyncLoader.js';
+import concurrencyLimiter from '../utils/concurrencyLimiter.js';
 
 /**
  * BatchLoader
@@ -143,7 +144,7 @@ export class BatchLoader {
      
      */
 
-    async run(loadList = [], load = null, fail = null,{ awaitAll = true } = {}) {
+    async run(loadList = [], load = null, fail = null,{ awaitAll = true,limit = 8 } = {}) {
 	// Track required IDs from load list
 	let required = loadList.map(({ id }) => id);
 	const batchWrapper = this.batchHandler === false
@@ -157,21 +158,31 @@ export class BatchLoader {
 	    fail: fail,
 	    prepend : this.context
 	});
-	
+	const limiter = concurrencyLimiter(limit);
 	const validatedList = this._preflightCheck(loadList);
 	const all = [];
 	for (const item of validatedList) {
 	    const { method = 'get', id, url, handler, opts = {}, data: postData = null } = item;
 	    const mOpts = { ...{ format: 'full' }, ...this.fetchOpts, ...opts };
 
-	    const request = method === 'post'
+	    /*const request = method === 'post'
 		  ? this.net.http.post(url, postData, mOpts)
 		  : this.net.http.get(url, mOpts);
-
+	    */
+	    const run = () => (
+		(method === 'post'
+		 ? this.net.http.post(url, postData, mOpts)
+		 : this.net.http.get(url, mOpts)
+		)
+		    .then(sync.wrapper(id, batchWrapper(this, id, handler, item, mOpts)))
+		    .then(result => ({ id, result }))
+	    );
+	    all.push(limiter(run));
+	    /*
 	    all.push(
 		request.then(sync.wrapper(id, batchWrapper(this, id, handler, item, mOpts)))
 		.then(result => ({ id, result }))
-	    );
+	    );*/
 	}
 
 
