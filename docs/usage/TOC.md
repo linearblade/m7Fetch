@@ -27,7 +27,7 @@
 * **Modules:** dynamic imports with simple registry.
 * **Batch/Sync loaders:** coordinate many requests with concurrency control.
 
-## 5) [Core API Overview](./CORE_API_OVERVIEW.md)
+## 5) [Core API Overview](./CORE_API/OVERVIEW.md)
 
 * `class Net(opts)` — constructor, subsystems, and lifecycle.
 * `class HTTP` — methods, option parsing, and response formats.
