@@ -87,7 +87,7 @@ export class BatchLoader {
     }
     //does nothing with your results. up to you.
     batchNone(obj,id,handler){
-	return return (res) => (handler?handler(res):res);
+	return (res) => (handler ? handler(res) : res);
     }
     //end fake statics
 
