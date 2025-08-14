@@ -156,10 +156,10 @@ await net.batch.run(
 Use `timeout` and/or pass an `AbortSignal` if your runtime supports it.
 
 ```js
-// Timeout example
+// Timeout example (creates an abort signal for you and intalls it)
 const slow = await net.http.get("/slow", { format: "full", timeout: 5000 });
 
-// Abort example
+// Abort example - inject your own
 const ctrl = new AbortController();
 const p = net.http.get("/stream", { format: "raw", signal: ctrl.signal });
 ctrl.abort();

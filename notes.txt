@@ -1,0 +1,41 @@
+quick start.
+- http signal always an abort signal, no ability to pass your own.
+
+basic concepts
+- http
+   parametres may be system wide defaults, run time overrides
+
+batch
+- per item overrides only. but they are passed to the .http controller, so they will gain any sytem defaults there.
+
+- syncloader
+    this is used internally, but it can be used for any tasks requiring all requirements to be met. making it a potentially powerful tool if you require this sort of thing.
+    link to docs
+
+
+
+http guide
+- requires full documentation or links to appropriate sub pages
+- doesnt list delete
+- Query strings & URLs -- this is incorrect, it does invent if required.
+
+CONFIGURATION & DEFAULTS
+- link to this from http
+- specify protocol / port only applies if setting base, otherwise it will use the path provided by the  request, and assume the local characteristics (ie, if you are on https it will go https, and if your already port 8080 it will go there. but can specify specific protocol / port in the url as well (asusming the base is not set or using absolute)
+
+
+autoloader
+- really a sub item of spec manager, but you could use it this way if you just wanted the spec
+- possibly file under spec man, or maybe later build a tool to just produce a  single spec loader object.
+
+modules
+- why not just await it yourself? b/c you can reload the module this way if you want.
+- should probably add this.
+
+other notes:
+
+add custom signalhandling
+add ability to pass in a custom HTTP.FETCH_DEFAULTS
+check if http has ability to set the default with a class method
+add ability to pass http runtime defaults possibly to override per item settings
+tweak modules to include a force option (and send random data at end to force a reload)

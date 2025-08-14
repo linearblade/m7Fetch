@@ -11,6 +11,7 @@ Short, practical definitions for terms used throughout **m7Fetch** docs.
 * **AbortController** — Web API to cancel a fetch. Pass `signal` to HTTP calls; call `abort()` to cancel.
 * **absolute** — Request option that bypasses the instance base URL and uses the provided URL as‑is.
 * **AutoLoader** — Logic behind `specs.load(...)` that detects spec type (e.g., OpenAPI), fetches it (GET/POST), and hands off to **SpecManager**. See **[AUTOLOADER.md](./AUTOLOADER.md)**.
+* **awaitAll** — Batch option: `true` waits for all items and returns a `results` map; `false` streams handler execution and uses SyncLoader for completion.
 * **BatchLoader** — Runs multiple HTTP jobs with per‑item handlers and a concurrency cap. Returns a `results` map (when `awaitAll:true`) and coordinates completion via **SyncLoader**. See **[BATCHING\_AND\_COORDINATION.md](./BATCHING_AND_COORDINATION.md)**.
 * **batch handlers** — Strategies controlling storage/failure behavior per item:
 
@@ -22,6 +23,8 @@ Short, practical definitions for terms used throughout **m7Fetch** docs.
   * `body`: parsed body only,
   * `full`: `{ ok, status, headers, body }`,
   * `raw`: native `Response`.
+* **credentials** — Fetch option controlling cookie send/receive behavior (`omit`, `same-origin`, `include`).
+* **context (batch)** — Shared object where per‑item results are stored under their IDs.
 * **CORS** — Browser security policy for cross‑origin requests; governed by server `Access-Control-*` headers.
 * **CSP** — Content‑Security‑Policy header that constrains resource loads (e.g., `connect-src`, `script-src`).
 
@@ -58,11 +61,8 @@ Short, practical definitions for terms used throughout **m7Fetch** docs.
 * **SyncLoader** — Minimal coordinator used by **BatchLoader**; tracks `require`d IDs, success/failure, and triggers final callbacks.
 * **timeout** — Per‑request ms value; aborts the request via `AbortController` when available.
 * **urlencoded** — Request option for form posts (`application/x-www-form-urlencoded`).
+* **WHATWG** — The *Web Hypertext Application Technology Working Group*, a standards body that maintains living web specifications such as the HTML Standard and Fetch Standard, referenced for API compliance in this library.
 * **x-type** — Optional hint used by **AutoLoader** to identify spec types (e.g., `openapi`).
-* **awaitAll** — Batch option: `true` waits for all items and returns a `results` map; `false` streams handler execution and uses SyncLoader for completion.
-* **absolute** — (duplicate index reference) See **A–D**; bypass instance base URL.
-* **credentials** — Fetch option controlling cookie send/receive behavior (`omit`, `same-origin`, `include`).
-* **context (batch)** — Shared object where per‑item results are stored under their IDs.
 
 ---
 

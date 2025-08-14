@@ -19,6 +19,17 @@ Its design favors:
 - Declarative API usage through OpenAPI or custom specs
 - Flexible module injection (local or remote)
 - Dynamic loading of manifests, assets, and operations
+
+📚 Full Guide
+m7Fetch is easy to use, however for advanced users there are a lot of options. For complete usage examples,  and advanced integration patterns, see:
+
+[Full Usage Guide](./docs/usage/TOC) →
+
+For detailed instructions and examples, please refer to the usage guide:
+
+Installation → [INSTALLATION.md](./docs/usage/INSTALLATION.md)
+Quick Start → [QUICKSTART.md](./docs/usage/QUICKSTART.md)
+Example Library → [EXAMPLES_LIBRARY.md](./docs/usage/EXAMPLES_LIBRARY.md)
 - Headless or console-based automation (yes, even from browser devtools)
 
 ---
