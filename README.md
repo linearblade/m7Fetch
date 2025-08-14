@@ -20,6 +20,8 @@ Its design favors:
 - Flexible module injection (local or remote)
 - Dynamic loading of manifests, assets, and operations
 
+## ---
+
 📚 Full Guide
 m7Fetch is easy to use, however for advanced users there are a lot of options. For complete usage examples,  and advanced integration patterns, see:
 
