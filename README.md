@@ -29,10 +29,9 @@ m7Fetch is easy to use, however for advanced users there are a lot of options. F
 
 For detailed instructions and examples, please refer to the usage guide:
 
-Installation → [INSTALLATION.md](./docs/usage/INSTALLATION.md)
-Quick Start → [QUICKSTART.md](./docs/usage/QUICKSTART.md)
-Example Library → [EXAMPLES_LIBRARY.md](./docs/usage/EXAMPLES_LIBRARY.md)
-- Headless or console-based automation (yes, even from browser devtools)
+- Installation → [INSTALLATION.md](./docs/usage/INSTALLATION.md)
+- Quick Start → [QUICKSTART.md](./docs/usage/QUICKSTART.md)
+- Example Library → [EXAMPLES_LIBRARY.md](./docs/usage/EXAMPLES_LIBRARY.md)
 
 ---
 
