@@ -15,6 +15,11 @@ Use **BatchLoader** (with **SyncLoader** under the hood) to run many HTTP reques
 
 ## Quick start
 
+Returns: 
+* `awaitAll:true` → `results: { [id]: value }`
+* `awaitAll:false` → `results: Promise<any>[]`
+
+
 ```js
 const { sync, results } = await net.batch.run(
   [

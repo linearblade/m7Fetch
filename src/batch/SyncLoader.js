@@ -277,6 +277,7 @@ export class SyncLoader {
 
     /**
      * [Experimental] Return a Promise that resolves when all required tasks are completed.
+     * //not in use at moment. working on it
      *
      * This allows `SyncLoader` to be used in `await`-style flows. It resolves once all
      * required task IDs have been marked via `set()` or `fail()`.

@@ -25,7 +25,7 @@ Its design favors:
 ## 📚 Full Guide
 m7Fetch is easy to use, however for advanced users there are a lot of options. For complete usage examples,  and advanced integration patterns, see:
 
-[Full Usage Guide](./docs/usage/TOC) →
+[Full Usage Guide](./docs/usage/TOC.md) →
 
 For detailed instructions and examples, please refer to the usage guide:
 

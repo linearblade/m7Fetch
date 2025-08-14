@@ -87,7 +87,7 @@ export class BatchLoader {
     }
     //does nothing with your results. up to you.
     batchNone(obj,id,handler){
-	return handler?handler(res):res;;
+	return return (res) => (handler?handler(res):res);
     }
     //end fake statics
 
@@ -192,9 +192,10 @@ export class BatchLoader {
 	if (awaitAll) {
             const flatResults = await Promise.all(all);
             for (const { id, result } of flatResults) results[id] = result;
+	    return { sync, results };
+	}else {
+	    return { sync, results: all }; 
 	}
-
-	return { sync, results };
 	
 	
     }
