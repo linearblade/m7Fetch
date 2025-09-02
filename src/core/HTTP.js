@@ -190,7 +190,9 @@ export class HTTP {
 	out.json = opts.json ?? true;
 	out.format = opts.format || 'body';
 	out.urlencoded = opts.urlencoded || false;
-
+	out.lockBehavior = opts.lockBehavior || 'throw';
+	out.limit = opts.limit || 1;
+	
 	const extra = this.buildDefaultFetchOpts(opts);
 	return { ...out, ...extra };
     }
