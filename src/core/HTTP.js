@@ -78,6 +78,7 @@ export class HTTP {
 	this.opts = this.parseOpts(opts);
 	this.base = this.buildBase(this.opts.url);
 	this.headers = this.opts.headers || {};
+	this.activeRequests = {};
     }
 
     async get(path, opts = {}) {
@@ -106,6 +107,31 @@ export class HTTP {
 	return this._bodyRequest('PATCH', path, data, opts);
     }
 
+    /**
+     * Generic request dispatcher.
+     * Decides between body/no-body request based on method.
+     *
+     * @param {string} url - Endpoint path or absolute URL.
+     * @param {object} [opts={}] - Options including method, headers, body/data, etc.
+     * @returns {Promise<*>} - Parsed response.
+     */
+    async request(url, opts = {}) {
+        const method = (opts.method || 'GET').toUpperCase();
+        
+        if (this.constructor.BODY_METHODS.includes(method)) {
+            // Prefer opts.body, fallback to opts.data
+            const bodyData = opts.body !== undefined ? opts.body : opts.data;
+            return this._bodyRequest(method, url, bodyData, opts);
+        } 
+        
+        if (this.constructor.BODYLESS_METHODS.includes(method)) {
+            return this._noBodyRequest(method, url, opts);
+        }
+
+        throw new Error(`Unsupported HTTP method: ${method}`);
+    }
+
+    
     
     /**
      * Parses and normalizes HTTP configuration options.
@@ -345,23 +371,28 @@ export class HTTP {
 
 	const start = performance.now();
 	const defaultFetchOpts = this.buildDefaultFetchOpts(this.opts);
-	const res = await fetch(url, {
-	    method: method.toUpperCase(),
-	    headers: { ...this.headers, ...headers },
-	    ...defaultFetchOpts,
-	    ...fetchOpts,
-	    ...timeoutConfig
-	});
-	const elapsed = performance.now() - start;
-	//ignore until decided on a better way to handle this.
-	//if (!res.ok)
-	//throw new Error(`GET ${path} failed: ${res.status} ${res.statusText}`);
+	if (!this.lockRequest(opts) )  return null;
+	try {
+	    const sendOpts = {
+		method: method.toUpperCase(),
+		headers: { ...this.headers, ...headers },
+		...defaultFetchOpts,
+		...fetchOpts,
+		...timeoutConfig
+	    };
+	    const res = await fetch(url, sendOpts);
 
-	const data = await this.parseResponse(res, opts,elapsed);
-	return this.processResponse(data, opts);
+	    const elapsed = performance.now() - start;
+
+	    const data = await this.parseResponse(res, opts,elapsed,sendOpts);
+	    return this.processResponse(data, opts);
+	}finally {
+	    this.unlockRequest(opts);
+	}
     }
-    
 
+
+    
     /**
      * Perform an HTTP request with a request body, supporting automatic encoding (JSON, URL-encoded, or raw), configurable timeouts, and customizable response parsing.
      *
@@ -441,25 +472,73 @@ export class HTTP {
 	}
 	const defaultFetchOpts = this.buildDefaultFetchOpts(this.opts);
 	const start = performance.now();
-	const res = await fetch(url, {
-	    method: method.toUpperCase(),
-	    headers: finalHeaders,
-	    body,
-	    ...defaultFetchOpts,
-	    ...fetchOpts,
-	    ...timeoutConfig
-	});
-	const elapsed = performance.now() - start;
+	if (!this.lockRequest(opts) )  return null;
+	try {
+	    const sendOpts = {
+		method: method.toUpperCase(),
+		headers: finalHeaders,
+		body,
+		...defaultFetchOpts,
+		...fetchOpts,
+		...timeoutConfig
+	    };
+	    const res = await fetch(url, sendOpts);
+	    const elapsed = performance.now() - start;
 
-	//ignore until I decide waht to do with this.
-	//if (!res.ok)
-	//	    throw new Error(`POST ${path} failed: ${res.status} ${res.statusText}`);
+	    //ignore until I decide waht to do with this.
+	    //if (!res.ok)
+	    //	    throw new Error(`POST ${path} failed: ${res.status} ${res.statusText}`);
 
-	const parsed = await this.parseResponse(res, opts, elapsed);
-	return this.processResponse(parsed, opts);
+	    const parsed = await this.parseResponse(res, opts, elapsed,sendOpts);
+	    return this.processResponse(parsed, opts);
+	}finally{
+	    this.unlockRequest(opts);
+	}
     }
 
 
+    lockRequest(opts = {}) {
+	const id = opts.id;
+	if (!id) return true; // no locking if no id provided
+
+	const behavior  = opts.lockBehavior ?? this.opts?.lockBehavior ?? "throw";
+	const rateLimit = parseInt(opts.limit ?? this.opts?.limit, 10) || 1;
+
+	const count = this.activeRequests[id] || 0;
+
+	if (count >= rateLimit) {
+            const msg = `Request "${id}" is currently active ${count} times (limit=${rateLimit}) (${behavior}).`;
+
+            if (behavior === "warn") {
+		console.warn(msg + " Skipping request.");
+		return false; // blocked
+            } else if (behavior === "notify") {
+		console.warn(msg + " Allowing request anyway.");
+		this.activeRequests[id] = count + 1; // still increment
+		return true; // allowed but noisy
+            } else {
+		throw new Error(msg); // default: throw
+            }
+	}
+
+	// increment counter
+	this.activeRequests[id] = count + 1;
+	return true;
+    }
+
+    unlockRequest(opts = {}) {
+	const id = opts.id;
+	if (!id) return;
+
+	if (this.activeRequests[id]) {
+            this.activeRequests[id]--;
+            if (this.activeRequests[id] <= 0) {
+		delete this.activeRequests[id];
+            }
+	}
+    }
+
+    
     /**
      * Constructs a fetch-compatible timeout configuration using `AbortController`.
      *
@@ -515,7 +594,7 @@ export class HTTP {
      * const full = await http.parseResponse(res, { format: "full" });
      * console.log(full.status, full.body);
      */
-    async parseResponse(res, opts = {}, elapsed = null) {
+    async parseResponse(res, opts = {}, elapsed = null,sendOpts = null) {
 	const isJSON = opts.json ?? this.opts.json ?? true;
 	const format = opts.format || this.opts.format || 'body';
 	const contentType = res.headers.get('content-type') || '';
@@ -539,7 +618,8 @@ export class HTTP {
 		redirected: res.redirected,
 		elapsedMs: elapsed,
 		headers: this.headersToObject(res.headers),
-		body
+		body,
+		request: sendOpts
 	    };
 	}
 
