@@ -192,7 +192,7 @@ export class HTTP {
 	out.urlencoded = opts.urlencoded || false;
 	out.lockBehavior = opts.lockBehavior || 'throw';
 	out.limit = opts.limit || 1;
-	
+	out.sendOpts = opts.sendOpts || false;
 	const extra = this.buildDefaultFetchOpts(opts);
 	return { ...out, ...extra };
     }
@@ -599,6 +599,7 @@ export class HTTP {
     async parseResponse(res, opts = {}, elapsed = null,sendOpts = null) {
 	const isJSON = opts.json ?? this.opts.json ?? true;
 	const format = opts.format || this.opts.format || 'body';
+	const returnSendOpts = opts.sendOpts || this.opts.sendOpts || false;
 	const contentType = res.headers.get('content-type') || '';
 	const isContentJSON = contentType.includes('application/json');
 
@@ -612,7 +613,7 @@ export class HTTP {
 	if (format === 'raw') return res;
 
 	if (format === 'full') {
-	    return {
+	    const base= {
 		status: res.status,
 		statusText: res.statusText,
 		ok: res.ok,
@@ -621,8 +622,10 @@ export class HTTP {
 		elapsedMs: elapsed,
 		headers: this.headersToObject(res.headers),
 		body,
-		request: sendOpts
 	    };
+	    if (returnSendOpts) base.sendOpts = sendOpts;
+	    return base;
+	    
 	}
 
 	return body;

@@ -1,0 +1,98 @@
+<!-- 🔐 Profile / Login Block -->
+<nav class="profile-nav">
+  <!-- Desktop profile button -->
+  <button class="profile-btn" aria-label="Profile / Login">
+    <img src="/assets/icon/ui/player.svg" alt="Profile" />
+    <span class="label">Profile</span>
+  </button>
+
+  <!-- Mobile menu toggle -->
+  <input type="checkbox" id="profile-toggle" class="profile-toggle" hidden />
+  <label for="profile-toggle" class="profile-icon">
+    <img src="/assets/icon/ui/player.svg" alt="Profile" />
+  </label>
+
+  <!-- Drop-down / slide-out menu -->
+  <div class="profile-menu">
+    <a href="/login">Login</a>
+    <a href="/signup">Sign Up</a>
+    <a href="/profile">My Profile</a>
+    <a href="/logout">Logout</a>
+  </div>
+</nav>
+
+<style>
+/* base */
+.profile-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  font-family: sans-serif;
+}
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: .9rem;
+}
+.profile-btn img,
+.profile-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+/* desktop dropdown */
+.profile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: .5rem;
+  display: none;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 100;
+}
+.profile-menu a {
+  padding: .4rem .6rem;
+  text-decoration: none;
+  color: #333;
+}
+.profile-menu a:hover {
+  background: #f2f2f2;
+}
+
+/* trigger dropdown on desktop hover */
+@media (min-width: 700px) {
+  .profile-btn:hover + .profile-menu,
+  .profile-menu:hover {
+    display: flex;
+  }
+  .profile-icon { display: none; }
+}
+
+/* mobile slide-out */
+@media (max-width: 699px) {
+  .profile-btn { display: none; }
+  .profile-icon {
+    cursor: pointer;
+    display: block;
+  }
+  .profile-toggle:checked ~ .profile-menu {
+    display: flex;
+    position: fixed;
+    top: 0; right: 0;
+    height: 100%;
+    width: 60%;
+    background: white;
+    border-left: 1px solid #ddd;
+    padding-top: 2rem;
+  }
+}
+</style>
